@@ -1,0 +1,33 @@
+import asyncio
+from datetime import datetime
+from telegram import Bot
+
+TOKEN = '7731731543:AAFS1hMAYVERTqR-pKIgITNIZ2srLclYao8'
+CHAT_ID = '@hasekc'
+
+bot = Bot(token=TOKEN)
+
+events = {
+    "каникул": datetime(2025, 5, 23),
+    "Пасхи": datetime(2025, 4, 20),
+    "Нового года": datetime(2026, 1, 1)
+}
+
+async def send_countdowns():
+    while True:
+        now = datetime.now()
+        message = ""
+
+        for name, date in events.items():
+            delta = (date - now).days
+            if delta > 0:
+                message += f"До {name} осталось {delta} дней\n"
+            elif delta == 0:
+                message += f"Сегодня {name}!\n"
+            else:
+                message += f"{name} уже прошло.\n"
+
+        await bot.send_message(chat_id=CHAT_ID, text=message.strip())
+        await asyncio.sleep(86400)  # 1 день
+
+asyncio.run(send_countdowns())
